@@ -26,6 +26,7 @@ namespace ToDoHWork2.Modal
         }
         public InputMessage()
         {
+            StyleManager.SetTheme(this, App.Theme);
             InitializeComponent();
         }
         public InputMessage(string Message)

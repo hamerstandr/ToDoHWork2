@@ -22,7 +22,7 @@ namespace ToDoHWork2
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : RadWindow
     {
         public static MainWindow Me;
         public static Messagebox Msg = new Messagebox();
@@ -32,7 +32,7 @@ namespace ToDoHWork2
         {
             InitializeComponent();
             Me = this;
-            this.Closing += MainWindow_Closing;
+            this.Closed += MainWindow_Closed; ;
             foreach(Tasks t in Database.Data.Works)
             {
                 var p = new Page();
@@ -44,16 +44,23 @@ namespace ToDoHWork2
             
         }
 
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closed(object sender, WindowClosedEventArgs e)
         {
+            // e.DialogResult = false;//==e.Cancel
             Database.Save();
+            App.Current.Shutdown();
         }
+
+        //private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        //{
+        //    Database.Save();
+        //}
 
         void AddWorkBook(Page page)
         {
             HTabItem tabItem = new HTabItem();
-            tabItem.Header = Header(tabItem,page.Tasks);
-            tabItem.Width = 45;
+            tabItem.Header = SetHeader(tabItem,page.Tasks);
+            
             tabItem.Content = page;
             WorkList.Items.Add(tabItem);
             WorkList.SelectedItem = tabItem;
@@ -69,7 +76,7 @@ namespace ToDoHWork2
         }
 
         double Size;
-        private object Header(HTabItem tabItem, Tasks tasks)
+        private object SetHeader(HTabItem tabItem, Tasks tasks)
         {
             StackPanel s = new StackPanel();
             Label LableTitle = new Label();
@@ -80,7 +87,7 @@ namespace ToDoHWork2
             LableDate.FontSize = Size - 2;
 
             LableDate.Content = tasks.Date;
-            LableDate.Foreground = Brushes.Gray;
+            LableDate.Foreground = Brushes.DarkGray;
             s.Children.Add(LableTitle);
             s.Children.Add(LableDate);
             tabItem.LableDate = LableDate;
@@ -112,6 +119,7 @@ namespace ToDoHWork2
             {
                 Page p = new Page(); 
                 p.Tasks = database.Data.Add(Title);
+                StyleManager.SetTheme(p, App.Theme);
                 AddWorkBook(p);
             }
             
@@ -131,8 +139,8 @@ namespace ToDoHWork2
             {
                 if (!tab.IsSelected)
                 {
-                    tab.LableTitle.Foreground = Brushes.White;
-                    tab.LableDate.Foreground = Brushes.LightGray;
+                    tab.LableTitle.Foreground = Brushes.FloralWhite;
+                    tab.LableDate.Foreground = Brushes.Gray;
                 }
             }
         }

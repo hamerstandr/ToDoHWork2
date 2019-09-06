@@ -18,5 +18,20 @@ namespace ToDoHWork2
         {
 
         }
+        public static Theme Theme;
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            Theme = new FluentTheme();
+            StyleManager.ApplicationTheme = Theme;
+            var w = new MainWindow();
+            StyleManager.SetTheme(w, Theme);
+            w.Show();
+            base.OnStartup(e);
+        }
+        //public static void ShowInTaskbar(RadWindow radWindow)
+        //{
+        //    Window w = radWindow as Window;
+        //    w.ShowInTaskbar = true;
+        //}
     }
 }

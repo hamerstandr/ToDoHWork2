@@ -36,6 +36,8 @@ namespace ToDoHWork2
         {
             InitializeComponent();
             this.Unloaded += Page_Unloaded;
+            StyleManager.SetTheme(Text1, App.Theme);
+            StyleManager.SetTheme(List1, App.Theme);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)

@@ -16,19 +16,19 @@ namespace ToDoHWork2.Modal
         public Label LableTitle;
         public HTabItem()
         {
-            StyleManager.SetTheme(this, new Office2016Theme());
+            StyleManager.SetTheme(this, App.Theme);
             Selector.SelectedEvent.AddOwner(typeof(HTabItem));
         }
         public override void OnSelected(RadRoutedEventArgs e)
         {
             base.OnSelected(e);
             LableTitle.Foreground = Brushes.Black;
-            LableDate.Foreground = Brushes.Gray;
+            LableDate.Foreground = Brushes.DarkGray;
         }
         public override void OnUnselected(RadRoutedEventArgs e)
         {
             base.OnUnselected(e);
-            LableTitle.Foreground = Brushes.White;
+            LableTitle.Foreground = Brushes.WhiteSmoke;
             LableDate.Foreground = Brushes.Gray;
         }
     }

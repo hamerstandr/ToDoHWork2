@@ -11,21 +11,29 @@ namespace ToDoHWork2.Modal
 {
     public class Messagebox
     {
-        public void Alert(string Messsage="Hello", EventHandler<WindowClosedEventArgs> closed=null)
+        public void Alert(string Message="Hello", EventHandler<WindowClosedEventArgs> closed=null)
         {
-            if (closed==null)
-                RadWindow.Alert(Messsage);
-            else
-                RadWindow.Alert(Messsage, closed);
-        }
-        private void AlertClosed(object sender, WindowClosedEventArgs e)
-        {
-            var result = e.DialogResult;
-            if (result == true)
+            //if (closed==null)
+            //    RadWindow.Alert(Messsage);
+            //else
+            //    RadWindow.Alert(Messsage, closed);
+            RadWindow.Alert(new DialogParameters()
             {
-                // handle confirmation 
-            }
+                Theme =App.Theme,
+                Content = Message,
+                Closed = closed,
+                OkButtonContent = "Ok",
+                Owner = MainWindow.Me
+            });
         }
+        //private void AlertClosed(object sender, WindowClosedEventArgs e)
+        //{
+        //    var result = e.DialogResult;
+        //    if (result == true)
+        //    {
+        //        // handle confirmation 
+        //    }
+        //}
         public static MessageBoxResult Show(ContentControl ctrlOwner, string strMessage, string strCaption = null, MessageBoxButton button = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.Warning)
         {
             try
@@ -55,10 +63,19 @@ namespace ToDoHWork2.Modal
                 return (MessageBoxResult.None);
             }
         }
-        public void Input(string Message= "Enter your name:")
+        
+        public void Input(string Message = "Enter your name:", EventHandler<WindowClosedEventArgs> closed = null)
         {
-            //StyleManager.SetTheme(this, new Office2016Theme());
-            RadWindow.Prompt(Message, InputClose);
+            //StyleManager.SetTheme(this,App.Theme);
+            RadWindow.Prompt(new DialogParameters()
+            {
+                Theme = App.Theme,
+                Content = Message,
+                Closed = closed,
+                OkButtonContent = "Ok",
+                CancelButtonContent= "Cancel",
+                Owner = MainWindow.Me
+            });
         }
         public event EventHandler<string> InputClosed;
         private void InputClose(object sender, WindowClosedEventArgs e)

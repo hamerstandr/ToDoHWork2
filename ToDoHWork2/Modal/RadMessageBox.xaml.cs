@@ -104,6 +104,7 @@ namespace ToDoHWork2.Modal
         /// </summary>
         public RadMessageBox()
         {
+            StyleManager.SetTheme(this, App.Theme);
             InitializeComponent();
             this.DataContext = this;
         }
