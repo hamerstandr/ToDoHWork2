@@ -1,0 +1,31 @@
+```
+# Build artifacts
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.out
+
+# Dependencies
+packages/
+bin/
+obj/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vs/
+.idea/
+*.userprefs
+
+# OS
+.DS_Store
+Thumbs.db
+```

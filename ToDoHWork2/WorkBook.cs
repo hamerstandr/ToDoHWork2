@@ -1,9 +1,5 @@
-﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace ToDoHWork2
@@ -11,49 +7,46 @@ namespace ToDoHWork2
     public class WorkBook
     {
         [XmlArray("Works")]
-        private List<Tasks> works = new List<Tasks>();
-
-        public List<Tasks> Works { get => works; set => works = value; }
+        public List<Tasks> Works { get; set; } = new();
 
         public static void Save(object obj, string path)
         {
             try
             {
-                XmlSerializer s = new XmlSerializer(obj.GetType());
-                using (StreamWriter writer = new StreamWriter(path))
-                {
-                    s.Serialize(writer, obj);
-                }
+                var serializer = new XmlSerializer(obj.GetType());
+                using var writer = new StreamWriter(path);
+                serializer.Serialize(writer, obj);
             }
             catch
-            { }
-
+            {
+                // Silent fail for now
+            }
         }
 
-        public static T Load<T>(string path)
+        public static T? Load<T>(string path) where T : class
         {
             try
             {
-                XmlSerializer s = new XmlSerializer(typeof(T));
-                using (StreamReader reader = new StreamReader(path))
-                {
-                    object obj = s.Deserialize(reader);
-                    return (T)obj;
-                }
+                var serializer = new XmlSerializer(typeof(T));
+                using var reader = new StreamReader(path);
+                return (T?)serializer.Deserialize(reader);
             }
-            catch { return default; }
-
-
+            catch
+            {
+                return default;
+            }
         }
-        public void Add(Tasks _Task)
+
+        public Tasks Add(string title)
         {
-            Works.Add(_Task);
-        }
-        public Tasks Add(string _Title)
-        {
-            Tasks _Task = new Tasks() { Items=new List<Task>(), Title = _Title, Date = DateTime.Now };
-            Works.Add(_Task);
-            return _Task;
+            var task = new Tasks
+            {
+                Items = new List<Task>(),
+                Title = title,
+                Date = DateTime.Now
+            };
+            Works.Add(task);
+            return task;
         }
     }
 }
