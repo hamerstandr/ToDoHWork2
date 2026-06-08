@@ -11,6 +11,9 @@ namespace ToDoHWork2
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            
+            // Initialize Dashboard Addon Service
+            Services.Dashboard.DashboardAddonService.Instance.Initialize();
         }
     }
 }

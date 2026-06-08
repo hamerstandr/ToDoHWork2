@@ -1,6 +1,5 @@
 ```
 # Build artifacts
-*.o
 *.obj
 *.exe
 *.dll
@@ -13,9 +12,8 @@ packages/
 bin/
 obj/
 
-# Logs and temp files
+# Logs
 *.log
-*.tmp
 
 # Environment
 .env
@@ -27,7 +25,7 @@ obj/
 .idea/
 *.userprefs
 
-# OS generated files
+# OS
 .DS_Store
 Thumbs.db
 ```
