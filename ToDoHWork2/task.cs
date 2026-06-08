@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Xml.Serialization;
 
 namespace ToDoHWork2
@@ -6,11 +6,12 @@ namespace ToDoHWork2
     public class Task
     {
         [XmlAttribute]
-        public bool Complte { get; set ; }
+        public bool Complte { get; set; }
+
         [XmlAttribute]
-        public string Title { get ; set ; }
+        public string Title { get; set; } = string.Empty;
+
         [XmlAttribute]
         public DateTime Date { get; set; }
-
     }
 }

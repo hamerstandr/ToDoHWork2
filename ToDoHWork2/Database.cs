@@ -1,39 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ToDoHWork2
 {
     class Database
     {
-        public readonly WorkBook Data = new WorkBook();
-        readonly string PathFileData= Path.Combine(Environment.GetFolderPath(
-    Environment.SpecialFolder.ApplicationData), typeof(App).Assembly.GetName().Name);
+        public WorkBook Data { get; } = new();
+        private readonly string _pathFileData;
+
         public Database()
         {
-            if(!Directory.Exists(PathFileData))
-                Directory.CreateDirectory(PathFileData);
-            PathFileData = Path.Combine(PathFileData, "Data.xml");
-            Data = WorkBook.Load<WorkBook>(PathFileData);
-            if (Data == null)
+            _pathFileData = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                typeof(App).Assembly.GetName().Name);
+
+            if (!Directory.Exists(_pathFileData))
+                Directory.CreateDirectory(_pathFileData);
+
+            _pathFileData = Path.Combine(_pathFileData, "Data.xml");
+
+            var loadedData = WorkBook.Load<WorkBook>(_pathFileData);
+            if (loadedData != null)
             {
-                Data = new WorkBook();
-                WorkBook.Save(Data, PathFileData);
+                Data.Works = loadedData.Works;
             }
-                
-        }
-        
-        internal void Save(string Path="")
-        {
-            if (Path == "")
+            else
             {
-                Path = PathFileData;
+                Save();
             }
-            WorkBook.Save(Data, Path);
         }
 
+        internal void Save(string path = "")
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                path = _pathFileData;
+            }
+            WorkBook.Save(Data, path);
+        }
     }
 }

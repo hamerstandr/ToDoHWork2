@@ -1,147 +1,97 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Telerik.Windows.Controls;
-using ToDoHWork2.Modal;
-using Label = Telerik.Windows.Controls.Label;
 
 namespace ToDoHWork2
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : RadWindow
+    public partial class MainWindow : Window
     {
-        public static MainWindow Me;
-        public static Messagebox Msg = new Messagebox();
-        readonly Database database = new Database();
-        internal Database Database => database;
+        public static MainWindow? Me { get; private set; }
+        private readonly Database _database = new();
+
+        public Database Database => _database;
+
         public MainWindow()
         {
             InitializeComponent();
             Me = this;
-            this.Closed += MainWindow_Closed; ;
-            foreach(Tasks t in Database.Data.Works)
+            Closing += MainWindow_Closing;
+
+            foreach (var tasks in Database.Data.Works)
             {
-                var p = new Page();
-                p.Tasks = t;
-                AddWorkBook(p);
+                var page = new Page { Tasks = tasks };
+                AddWorkBook(page);
             }
-            //StyleManager.SetTheme(this,new Office2016Theme());
-            //Msg.InputClosed += Msg_InputClosed;
-            
         }
 
-        private void MainWindow_Closed(object sender, WindowClosedEventArgs e)
+        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            // e.DialogResult = false;//==e.Cancel
             Database.Save();
-            App.Current.Shutdown();
         }
 
-        //private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        //{
-        //    Database.Save();
-        //}
-
-        void AddWorkBook(Page page)
+        private void AddWorkBook(Page page)
         {
-            HTabItem tabItem = new HTabItem();
-            tabItem.Header = SetHeader(tabItem,page.Tasks);
-            
-            tabItem.Content = page;
+            var tabItem = new TabItem
+            {
+                Header = CreateHeader(page.Tasks),
+                Content = page,
+                Tag = page
+            };
             WorkList.Items.Add(tabItem);
             WorkList.SelectedItem = tabItem;
-            var ev= Selector.SelectedEvent.AddOwner(tabItem.GetType());
-            
         }
 
-        internal void Remove(HTabItem TabItem)
+        private StackPanel CreateHeader(Tasks tasks)
         {
-            WorkList.Items.Remove(TabItem);
-            var page = TabItem.Content as Page;
-            Database.Data.Works.Remove(page.Tasks);
+            var stackPanel = new StackPanel();
+            var labelTitle = new TextBlock
+            {
+                Text = tasks.Title,
+                FontSize = 14,
+                FontWeight = FontWeights.Bold
+            };
+            var labelDate = new TextBlock
+            {
+                Text = tasks.Date.ToString("yyyy-MM-dd HH:mm"),
+                FontSize = 11,
+                Foreground = System.Windows.Media.Brushes.Gray
+            };
+            stackPanel.Children.Add(labelTitle);
+            stackPanel.Children.Add(labelDate);
+            return stackPanel;
         }
 
-        double Size;
-        private object SetHeader(HTabItem tabItem, Tasks tasks)
+        internal void Remove(TabItem tabItem)
         {
-            StackPanel s = new StackPanel();
-            Label LableTitle = new Label();
-            LableTitle.Content = tasks.Title;
-            Label LableDate = new Label();
-
-            Size = LableTitle.FontSize;
-            LableDate.FontSize = Size - 2;
-
-            LableDate.Content = tasks.Date;
-            LableDate.Foreground = Brushes.DarkGray;
-            s.Children.Add(LableTitle);
-            s.Children.Add(LableDate);
-            tabItem.LableDate = LableDate;
-            tabItem.LableTitle = LableTitle;
-            return s;
+            WorkList.Items.Remove(tabItem);
+            if (tabItem.Content is Page page)
+            {
+                Database.Data.Works.Remove(page.Tasks);
+            }
         }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            database.Save();
-        }
-
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            //Msg.Input("Enter Title");
-            var title = Msg.InputBox("Enter Title");
-            AddnewWork(title);
+            var dialog = new InputDialog("Enter Title");
+            dialog.Owner = this;
+            if (dialog.ShowDialog() == true && !string.IsNullOrEmpty(dialog.Result))
+            {
+                AddNewWork(dialog.Result);
+            }
         }
 
-        //private void Msg_InputClosed(object sender, string e)
-        //{
-        //    AddnewWork(e);
-        //}
-
-        private void AddnewWork(string Title)
+        private void AddNewWork(string title)
         {
-            if (Title != null)
+            if (!string.IsNullOrEmpty(title))
             {
-                Page p = new Page(); 
-                p.Tasks = database.Data.Add(Title);
-                StyleManager.SetTheme(p, App.Theme);
-                AddWorkBook(p);
-            }
-            
-        }
-
-        private void WorkList_SelectionChanged(object sender, RadSelectionChangedEventArgs e)
-        {
-            foreach (HTabItem tab in e.AddedItems)
-            {
-                if (tab.IsSelected)
+                var page = new Page
                 {
-                    tab.LableTitle.Foreground = Brushes.Black;
-                    tab.LableDate.Foreground = Brushes.DarkGray;
-                }
-            }
-            foreach (HTabItem tab in e.RemovedItems)
-            {
-                if (!tab.IsSelected)
-                {
-                    tab.LableTitle.Foreground = Brushes.FloralWhite;
-                    tab.LableDate.Foreground = Brushes.Gray;
-                }
+                    Tasks = Database.Data.Add(title)
+                };
+                AddWorkBook(page);
             }
         }
     }
